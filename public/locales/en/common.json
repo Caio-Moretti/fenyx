@@ -1,0 +1,30 @@
+{
+  "common": {
+    "app_name": "FENYX",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "sign_out": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot password?",
+    "google_sign_in": "Sign in with Google"
+  },
+  "workout": {
+    "my_workouts": "My Workouts",
+    "create_workout": "Create Workout",
+    "edit_workout": "Edit Workout",
+    "start_workout": "Start Workout",
+    "exercises": "Exercises",
+    "sets": "Sets",
+    "reps": "Reps",
+    "weight": "Weight",
+    "rir": "RIR (Reps in Reserve)"
+  }
+}

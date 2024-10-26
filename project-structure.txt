@@ -1,0 +1,79 @@
+fenyx/
+├── README.md                     # Project documentation
+├── .env.example                  # Environment variables template
+├── .gitignore                   # Git ignore file
+├── package.json                 # Project dependencies and scripts
+├── tsconfig.json                # TypeScript configuration
+├── tailwind.config.ts           # Tailwind CSS configuration
+├── next.config.mjs              # Next.js configuration
+├── postcss.config.js            # PostCSS configuration
+├── middleware.ts                # Next.js middleware for auth and i18n
+│
+├── public/                      # Static assets
+│   ├── locales/                # Translation files
+│   │   ├── en/
+│   │   │   └── common.json
+│   │   └── pt-BR/
+│   │       └── common.json
+│   └── images/
+│       └── logo.svg
+│
+├── src/
+│   ├── app/                    # Next.js 14 App Router structure
+│   │   ├── [locale]/          # i18n route group
+│   │   │   ├── (auth)/       # Auth route group
+│   │   │   │   ├── login/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── register/
+│   │   │   │       └── page.tsx
+│   │   │   │
+│   │   │   ├── (dashboard)/  # Protected dashboard routes
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── programs/
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── [id]/
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── workout/
+│   │   │   │       └── [id]/
+│   │   │   │           └── page.tsx
+│   │   │   │
+│   │   │   ├── layout.tsx    # Root layout with i18n provider
+│   │   │   └── page.tsx      # Home page
+│   │   │
+│   │   └── api/              # API routes (if needed)
+│   │
+│   ├── components/           # React components
+│   │   ├── ui/              # shadcn/ui components
+│   │   ├── auth/            # Authentication components
+│   │   ├── programs/        # Workout program components
+│   │   ├── workout/         # Workout tracking components
+│   │   └── shared/          # Shared components
+│   │
+│   ├── lib/                 # Shared utilities
+│   │   ├── supabase/        # Supabase client configuration
+│   │   ├── utils/           # Helper functions
+│   │   └── i18n/            # Internationalization setup
+│   │
+│   ├── server/              # Server-side code
+│   │   ├── actions/         # Server Actions
+│   │   │   ├── auth.ts
+│   │   │   ├── programs.ts
+│   │   │   └── workouts.ts
+│   │   └── db/             # Database schemas and types
+│   │       └── schema.ts
+│   │
+│   ├── types/              # TypeScript type definitions
+│   │   ├── database.ts
+│   │   └── shared.ts
+│   │
+│   ├── hooks/              # Custom React hooks
+│   │   ├── use-auth.ts
+│   │   └── use-workout.ts
+│   │
+│   └── styles/             # Global styles
+│       └── globals.css
+│
+└── tests/                  # Test files
+    ├── unit/
+    └── integration/

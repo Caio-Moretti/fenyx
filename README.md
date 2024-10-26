@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FENYX
+
+A minimalist, mobile-first workout tracking application focused on providing an efficient experience for logging and monitoring gym progress.
+
+## Tech Stack
+
+- Frontend:
+  - Next.js 14.2.7 (App Router)
+  - TypeScript
+  - Tailwind CSS
+  - Shadcn/UI
+  - next-intl for i18n
+
+- Backend:
+  - Next.js Server Actions
+  - Supabase
+
+## Features
+
+- 🔐 Authentication with email/password and Google SSO
+- 🌍 Internationalization (PT-BR and EN)
+- 💪 Workout program management
+- 📱 Mobile-first workout tracking interface
+- 📊 Progress tracking and history
+- 🌙 Dark mode by default
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.17 or later
+- npm or yarn
+- Supabase account
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/fenyx.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+cd fenyx
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Copy the environment variables template:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Update the environment variables with your Supabase credentials
 
-## Learn More
+5. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Project Structure
 
-## Deploy on Vercel
+The project follows a feature-based structure with clear separation of concerns:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/app`: Next.js 14 App Router pages and layouts
+- `src/components`: Reusable React components
+- `src/server`: Server-side logic and database operations
+- `src/lib`: Shared utilities and configurations
+- `src/types`: TypeScript type definitions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Contributing
+
+1. Create a feature branch
+2. Commit your changes
+3. Push to the branch
+4. Create a Pull Request
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
