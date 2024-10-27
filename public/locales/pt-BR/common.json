@@ -26,5 +26,25 @@
     "reps": "Repetições",
     "weight": "Peso",
     "rir": "RIR (Reps in Reserve)"
+  },
+  "hero": {
+    "tagline": "Acompanhe seus treinos com precisão"
+  },
+  "features": {
+    "tracking": {
+      "title": "Registro Eficiente",
+      "description": "Registre suas séries de forma rápida e eficiente durante os treinos"
+    },
+    "progress": {
+      "title": "Acompanhe seu Progresso",
+      "description": "Monitore seus ganhos de força ao longo do tempo"
+    },
+    "custom": {
+      "title": "Treinos Personalizados",
+      "description": "Crie e personalize suas rotinas de treino"
+    }
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados"
   }
 }

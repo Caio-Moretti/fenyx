@@ -26,5 +26,25 @@
     "reps": "Reps",
     "weight": "Weight",
     "rir": "RIR (Reps in Reserve)"
+  },
+  "hero": {
+    "tagline": "Track your workouts with precision"
+  },
+  "features": {
+    "tracking": {
+      "title": "Efficient Tracking",
+      "description": "Log your sets quickly and efficiently during workouts"
+    },
+    "progress": {
+      "title": "Track Progress",
+      "description": "Monitor your strength gains over time"
+    },
+    "custom": {
+      "title": "Custom Workouts",
+      "description": "Create and customize your workout routines"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved"
   }
 }

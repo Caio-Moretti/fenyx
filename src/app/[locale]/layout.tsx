@@ -1,37 +1,27 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../globals.css";
-import { notFound } from "next/navigation";
-import { NextIntlClientProvider, useMessages } from "next-intl";
+// src/app/[locale]/layout.tsx
 
-const inter = Inter({ subsets: ["latin"] });
+import { NextIntlClientProvider } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "FENYX",
-  description: "Track your workouts with precision",
-};
-
-export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "pt-BR" }];
-}
-
-export default function RootLayout({
+export default async function LocaleLayout({
   children,
-  params: { locale },
+  params: { locale }
 }: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  if (!["en", "pt-BR"].includes(locale)) notFound();
-  const messages = useMessages();
+  let messages;
+  try {
+    // Caminho correto para as mensagens
+    messages = (await import(`@/../../public/locales/${locale}/common.json`)).default;
+  } catch (error) {
+    console.error('Failed to load messages:', error);
+    // Fallback para pt-BR
+    messages = (await import(`@/../../public/locales/pt-BR/common.json`)).default;
+  }
 
   return (
-    <html lang={locale}>
-      <body className={inter.className}>
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlClientProvider>
   );
 }
