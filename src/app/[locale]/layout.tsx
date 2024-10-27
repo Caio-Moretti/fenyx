@@ -11,11 +11,9 @@ export default async function LocaleLayout({
 }) {
   let messages;
   try {
-    // Caminho correto para as mensagens
     messages = (await import(`@/../../public/locales/${locale}/common.json`)).default;
   } catch (error) {
     console.error('Failed to load messages:', error);
-    // Fallback para pt-BR
     messages = (await import(`@/../../public/locales/pt-BR/common.json`)).default;
   }
 

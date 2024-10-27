@@ -16,7 +16,6 @@ import {
 import { ArrowRight, Dumbbell, LineChart, Zap } from 'lucide-react'
 
 export default function Home() {
-  // Removido 'common' pois já está no namespace padrão
   const t = useTranslations()
   
   return (

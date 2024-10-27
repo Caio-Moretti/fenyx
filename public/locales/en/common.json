@@ -5,7 +5,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "name": "Name"
   },
   "auth": {
     "sign_in": "Sign In",
@@ -14,7 +15,21 @@
     "email": "Email",
     "password": "Password",
     "forgot_password": "Forgot password?",
-    "google_sign_in": "Sign in with Google"
+    "google_sign_in": "Sign in with Google",
+    "create_account_description": "Create an account to start tracking your workouts",
+    "already_have_account": "Already have an account?",
+    "verify_email": {
+      "title": "Check your email",
+      "description": "We've sent you a verification link. Please check your email to verify your account.",
+      "resend": "Resend verification email"
+    }
+  },
+  "errors": {
+    "name_required": "Name is required",
+    "email_required": "Email is required",
+    "email_invalid": "Please enter a valid email address",
+    "password_required": "Password is required",
+    "password_min_length": "Password must be at least 6 characters"
   },
   "workout": {
     "my_workouts": "My Workouts",
