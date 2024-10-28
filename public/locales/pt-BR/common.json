@@ -18,19 +18,42 @@
     "google_sign_in": "Entrar com Google",
     "create_account_description": "Crie uma conta para começar a registrar seus treinos",
     "already_have_account": "Já tem uma conta?",
+    "welcome_back": "Bem-vindo de volta! Entre para continuar",
+    "dont_have_account": "Ainda não tem uma conta?",
+    "invalid_credentials": "Email ou senha inválidos",
+    "email_not_confirmed": "Por favor, confirme seu email antes de entrar",
     "verify_email": {
       "title": "Verifique seu e-mail",
       "description": "Enviamos um link de verificação. Por favor, verifique seu e-mail para ativar sua conta.",
       "resend": "Reenviar e-mail de verificação",
       "check_spam": "Verifique também sua pasta de spam se não encontrar o e-mail."
-    }
+    },
+    "reset_password": {
+      "title": "Redefinir Senha",
+      "description": "Digite seu e-mail e enviaremos instruções para redefinir sua senha.",
+      "submit": "Enviar Instruções",
+      "check_email_title": "Verifique seu e-mail",
+      "check_email_description": "Se existe uma conta com este e-mail, enviamos as instruções para redefinição de senha.",
+      "check_spam": "Se você não encontrar o e-mail na caixa de entrada, verifique sua pasta de spam.",
+      "try_different_email": "Tentar outro e-mail",
+      "new_password_title": "Criar Nova Senha",
+      "new_password_description": "Por favor, digite sua nova senha abaixo.",
+      "confirm_password": "Confirmar Senha",
+      "passwords_dont_match": "As senhas não coincidem",
+      "update_password": "Atualizar Senha",
+      "password_updated": "Senha atualizada com sucesso",
+      "invalid_or_expired": "Este link de redefinição de senha é inválido ou expirou. Por favor, solicite um novo."
+    },
+    "back_to_login": "Voltar para login"
   },
   "errors": {
     "name_required": "Nome é obrigatório",
     "email_required": "E-mail é obrigatório",
     "email_invalid": "Por favor, insira um e-mail válido",
     "password_required": "Senha é obrigatória",
-    "password_min_length": "A senha deve ter no mínimo 6 caracteres"
+    "password_min_length": "A senha deve ter no mínimo 6 caracteres",
+    "confirm_password_required": "Por favor, confirme sua senha",
+    "unknown_error": "Ocorreu um erro inesperado. Por favor, tente novamente."
   },
   "workout": {
     "my_workouts": "Meus Treinos",
