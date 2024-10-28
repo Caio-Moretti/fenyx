@@ -21,7 +21,8 @@
     "verify_email": {
       "title": "Check your email",
       "description": "We've sent you a verification link. Please check your email to verify your account.",
-      "resend": "Resend verification email"
+      "resend": "Resend verification email",
+      "check_spam": "Check your spam folder if you don't see the email in your inbox."
     }
   },
   "errors": {

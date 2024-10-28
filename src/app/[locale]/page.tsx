@@ -23,7 +23,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-16 text-center space-y-8">
         <div className="space-y-4 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-br from-primary to-white bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-br from-primary to-red-900 bg-clip-text text-transparent">
             {t('common.app_name')}
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">
