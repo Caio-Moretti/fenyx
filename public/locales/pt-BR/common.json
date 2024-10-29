@@ -10,7 +10,8 @@
     "dashboard": "Início",
     "profile": "Perfil",
     "settings": "Configurações",
-    "menu": "Menu"
+    "menu": "Menu",
+    "try_again": "Tentar novamente"
   },
   "auth": {
     "sign_in": "Entrar",
@@ -57,18 +58,22 @@
     "password_required": "Senha é obrigatória",
     "password_min_length": "A senha deve ter no mínimo 6 caracteres",
     "confirm_password_required": "Por favor, confirme sua senha",
-    "unknown_error": "Ocorreu um erro inesperado. Por favor, tente novamente."
+    "unknown_error": "Ocorreu um erro inesperado. Por favor, tente novamente.",
+    "load_failed": "Falha ao carregar treinos"
   },
   "workout": {
     "my_workouts": "Meus Treinos",
+    "manage_description": "Crie e gerencie seus treinos",
     "create_workout": "Criar Treino",
-    "edit_workout": "Editar Treino",
+    "no_workouts": "Nenhum treino encontrado",
+    "no_workouts_description": "Você ainda não criou nenhum treino. Comece criando seu primeiro treino!",
+    "create_first_workout": "Criar Primeiro Treino",
+    "exercises": {
+      "one": "{{count}} exercício",
+      "other": "{{count}} exercícios"
+    },
     "start_workout": "Iniciar Treino",
-    "exercises": "Exercícios",
-    "sets": "Séries",
-    "reps": "Repetições",
-    "weight": "Peso",
-    "rir": "RIR (Reps in Reserve)"
+    "no_exercises": "Nenhum exercício ainda"
   },
   "hero": {
     "tagline": "Acompanhe seus treinos com precisão"

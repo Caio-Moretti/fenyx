@@ -10,7 +10,8 @@
     "dashboard": "Dashboard",
     "profile": "Profile",
     "settings": "Settings",
-    "menu": "Menu"
+    "menu": "Menu",
+    "try_again": "Try again"
   },
   "auth": {
     "sign_in": "Sign In",
@@ -57,18 +58,22 @@
     "password_required": "Password is required",
     "password_min_length": "Password must be at least 6 characters",
     "confirm_password_required": "Please confirm your password",
-    "unknown_error": "An unexpected error occurred. Please try again."
+    "unknown_error": "An unexpected error occurred. Please try again.",
+    "load_failed": "Failed to load workouts"
   },
   "workout": {
     "my_workouts": "My Workouts",
+    "manage_description": "Create and manage your workouts",
     "create_workout": "Create Workout",
-    "edit_workout": "Edit Workout",
+    "no_workouts": "No workouts found",
+    "no_workouts_description": "You haven't created any workouts yet. Start by creating your first workout!",
+    "create_first_workout": "Create First Workout",
+    "exercises": {
+      "one": "{{count}} exercise",
+      "other": "{{count}} exercises"
+    },
     "start_workout": "Start Workout",
-    "exercises": "Exercises",
-    "sets": "Sets",
-    "reps": "Reps",
-    "weight": "Weight",
-    "rir": "RIR (Reps in Reserve)"
+    "no_exercises": "No exercises yet"
   },
   "hero": {
     "tagline": "Track your workouts with precision"

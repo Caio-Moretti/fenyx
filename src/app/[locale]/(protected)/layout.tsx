@@ -34,13 +34,11 @@ export default async function ProtectedLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sidebar */}
       <Suspense fallback={null}>
         <Sidebar />
       </Suspense>
 
-      {/* Main Content */}
-      <main className="container mx-auto p-4 pt-16"> {/* padding-top para o botão do menu */}
+      <main className="container mx-auto p-4 pt-16">
         {children}
       </main>
     </div>

@@ -12,22 +12,18 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') ?? '/'
 
-  // Verifica se temos os parâmetros necessários
   if (token_hash && type) {
     const supabase = await createClient()
 
-    // Verifica o token com o Supabase
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     })
 
-    // Se não houver erro, redireciona para a página especificada ou home
     if (!error) {
       return redirect(next)
     }
   }
 
-  // Se algo der errado, redireciona para uma página de erro
   return redirect('/auth/error')
 }
