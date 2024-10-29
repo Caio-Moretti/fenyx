@@ -2,12 +2,8 @@
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isPublicPath } from '@/config/ispublic'
 
-/**
- * Updates the Supabase session and manages authentication state
- * IMPORTANT: This function should be called with minimal logic between
- * createServerClient and auth.getUser() to avoid session issues
- */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -33,18 +29,12 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Get user data
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/register')
-  ) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  if (!user && !isPublicPath(request.nextUrl.pathname)) {
+    const locale = request.nextUrl.pathname.startsWith('/en') ? 'en' : 'pt-BR'
+    const loginUrl = new URL(`/${locale}/login`, request.url)
+    return NextResponse.redirect(loginUrl)
   }
 
   return response

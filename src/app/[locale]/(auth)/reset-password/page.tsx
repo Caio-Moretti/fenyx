@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { resetPassword } from '@/server/actions/auth'
 
-// UI Components
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -36,7 +35,6 @@ export default function ResetPasswordPage() {
     formState: { errors, isSubmitting }
   } = useForm<ResetPasswordFormData>()
 
-  // Watch the password field for confirmation validation
   const password = watch('password')
 
   const onSubmit = async (data: ResetPasswordFormData) => {

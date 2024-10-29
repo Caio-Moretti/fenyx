@@ -118,3 +118,17 @@ export async function resetPassword(data: PasswordResetData) {
 
   redirect('/dashboard')
 }
+
+
+export async function logout(locale: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.signOut()
+
+  if (error) {
+    console.error('Erro ao fazer logout:', error)
+    return { error: 'Ocorreu um erro ao tentar sair. Por favor, tente novamente.' }
+  }
+
+  redirect(`/${locale}/login`)
+}

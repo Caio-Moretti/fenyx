@@ -7,6 +7,10 @@ import { updateSession } from '@/lib/supabase/middleware'
 export async function middleware(request: NextRequest) {
   const supabaseResponse = await updateSession(request)
   
+  if (supabaseResponse instanceof Response && supabaseResponse.headers.has('location')) {
+    return supabaseResponse
+  }
+  
   const intlMiddleware = createIntlMiddleware({
     locales: ['en', 'pt-BR'],
     defaultLocale: 'pt-BR',

@@ -1,5 +1,4 @@
 // src/app/[locale]/layout.tsx
-
 import { NextIntlClientProvider } from "next-intl";
 
 export default async function LocaleLayout({

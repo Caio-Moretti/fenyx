@@ -6,7 +6,11 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
-    "name": "Name"
+    "name": "Name",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "menu": "Menu"
   },
   "auth": {
     "sign_in": "Sign In",
