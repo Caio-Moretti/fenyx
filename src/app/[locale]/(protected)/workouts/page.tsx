@@ -3,23 +3,62 @@
 
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Dumbbell, Layers, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { useWorkouts } from '@/hooks/useWorkouts'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton'
+import { useWorkouts } from '@/hooks/useWorkouts'
+import { deleteWorkout } from '@/server/actions/workouts/index'
 
 export default function WorkoutsPage() {
   const t = useTranslations()
-  const { workouts, isLoading, error } = useWorkouts()
-  
+  const { workouts, isLoading, error, refresh } = useWorkouts()
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [workoutToDelete, setWorkoutToDelete] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+
+  const handleDelete = async () => {
+    if (!workoutToDelete) return
+
+    try {
+      setIsDeleting(true)
+      setDeleteError(null)
+      
+      await deleteWorkout(workoutToDelete)
+      
+      setWorkoutToDelete(null)
+      
+      refresh()
+      
+    } catch (err) {
+      console.error('Error deleting workout:', err)
+      setDeleteError(
+        err instanceof Error 
+          ? err.message 
+          : t('errors.delete_failed')
+      )
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   // Loading state
   if (isLoading) {
     return (
@@ -41,9 +80,9 @@ export default function WorkoutsPage() {
                 <Skeleton className="h-6 w-[140px]" />
                 <Skeleton className="h-4 w-[100px]" />
               </CardHeader>
-              <CardFooter>
+              <CardContent>
                 <Skeleton className="h-10 w-full" />
-              </CardFooter>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -85,64 +124,119 @@ export default function WorkoutsPage() {
         </div>
         
         <Button asChild>
-          <Link href="/workouts/new" className="gap-2">
-            <Plus className="h-4 w-4" />
+          <Link href="/workouts/new">
             {t('workout.create_workout')}
           </Link>
         </Button>
       </div>
 
       {/* Workouts Grid */}
-      {workouts.length === 0 ? (
-        // Empty State
-        <Card className="flex flex-col items-center justify-center p-8 text-center">
-          <div className="mx-auto w-full max-w-md space-y-4">
-            <CardHeader>
-              <CardTitle>{t('workout.no_workouts')}</CardTitle>
-              <CardDescription>
-                {t('workout.no_workouts_description')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild>
-                <Link href="/workouts/new" className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  {t('workout.create_first_workout')}
-                </Link>
-              </Button>
-            </CardContent>
-          </div>
-        </Card>
-      ) : (
-        // Workouts List/Grid
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {workouts.map((workout) => (
-            <Link 
-              key={workout.id} 
-              href={`/workouts/${workout.id}`}
-              className="transition-transform hover:scale-[1.02]"
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="line-clamp-1">
-                    {workout.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {workout.exercises?.length > 0 
-                      ? t('workout.exercises', { count: workout.exercises.length })
-                      : t('workout.no_exercises')}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button variant="secondary" className="w-full gap-2">
-                    {t('workout.start_workout')}
-                  </Button>
-                </CardFooter>
-              </Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {workouts.map((workout) => (
+          <Card 
+            key={workout.id} 
+            className="bg-card hover:bg-accent/50 transition-colors relative group"
+          >
+            <Link href={`/workouts/${workout.id}`} className="block">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">{workout.name}</CardTitle>
+                <CardContent className="p-0 pt-4">
+                  <div className="space-y-3">
+                    {/* Exercícios */}
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                      <Dumbbell className="h-5 w-5 text-primary" />
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-medium text-foreground">
+                          {workout.exercises?.length || 0}
+                        </span>
+                        <span className="text-sm">
+                          {t(workout.exercises?.length === 1 ? 'workout.exercise' : 'workout.exercises')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Séries totais */}
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                      <Layers className="h-5 w-5 text-primary" />
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-medium text-foreground">
+                          {workout.exercises?.reduce((total, ex) => total + (ex.targetSets || 0), 0)}
+                        </span>
+                        <span className="text-sm">
+                          {t('workout.total_sets')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Sessões realizadas */}
+                    {/* <div className="flex items-center gap-3 text-muted-foreground">
+                      <History className="h-5 w-5 text-primary" />
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-medium text-foreground">
+                          {workout.completedSessions || 0}
+                        </span>
+                        <span className="text-sm">
+                          {t('workout.completed_sessions')}
+                        </span>
+                      </div>
+                    </div> */}
+                  </div>
+                </CardContent>
+              </CardHeader>
             </Link>
-          ))}
-        </div>
-      )}
+
+            {/* Botão de delete */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-3 right-3 h-8 w-8"
+              onClick={(e) => {
+                e.preventDefault();
+                setWorkoutToDelete(workout.id);
+              }}
+            >
+              <Trash2 className="h-4 w-4 text-red-600"/>
+              <span className="sr-only">{t('common.delete')}</span>
+            </Button>
+          </Card>
+        ))}
+      </div>
+
+      {/* Dialog de confirmação de delete */}
+      <AlertDialog 
+        open={!!workoutToDelete} 
+        onOpenChange={() => setWorkoutToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('workout.delete_confirmation_title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('workout.delete_confirmation_description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          {deleteError && (
+            <p className="text-sm text-destructive">
+              {deleteError}
+            </p>
+          )}
+          
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isDeleting ? t('common.loading') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

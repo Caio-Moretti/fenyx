@@ -20,21 +20,11 @@ export function Sidebar() {
   const locale = pathname.startsWith('/en') ? 'en' : 'pt-BR'
 
   const navigation = [
-    { 
-      href: '/dashboard',
-      label: t('common.dashboard'),
-      icon: Home
-    },
     {
       href: '/workouts',
       label: t('workout.my_workouts'),
       icon: Dumbbell
     },
-    {
-      href: '/profile',
-      label: t('common.profile'),
-      icon: User
-    }
   ]
 
   const handleLogout = () => {

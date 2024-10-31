@@ -1,60 +1,169 @@
 // src/app/[locale]/(protected)/workouts/new/page.tsx
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { useForm } from 'react-hook-form'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFieldArray } from 'react-hook-form'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { z } from 'zod'
+import { createWorkout } from '@/server/actions/workouts/index'
+
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
 
-interface CreateWorkoutForm {
-  name: string
-}
+// Schema de validação para o formulário
+const exerciseSchema = z.object({
+  name: z.string().min(1, 'Nome do exercício é obrigatório'),
+  targetSets: z.coerce
+    .number()
+    .min(1, 'Mínimo de 1 série')
+    .max(10, 'Máximo de 10 séries'),
+  targetRepsMin: z.coerce
+    .number()
+    .min(1, 'Mínimo de 1 repetição')
+    .max(100, 'Máximo de 100 repetições'),
+  targetRepsMax: z.coerce
+    .number()
+    .min(1, 'Mínimo de 1 repetição')
+    .max(100, 'Máximo de 100 repetições'),
+}).refine(data => {
+  // Validação adicional: max reps deve ser maior que min reps
+  return data.targetRepsMax >= data.targetRepsMin;
+}, {
+  message: 'O máximo de repetições deve ser maior ou igual ao mínimo',
+  path: ['targetRepsMax']
+});
 
-export default function NewWorkoutPage() {
+const createWorkoutSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  exercises: z.array(exerciseSchema)
+    .min(1, 'Adicione pelo menos um exercício'),
+})
+
+// Tipo inferido do schema
+type CreateWorkoutFormData = z.infer<typeof createWorkoutSchema>
+
+export default function CreateWorkoutPage() {
   const t = useTranslations()
   const router = useRouter()
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
   
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<CreateWorkoutForm>()
+  } = useForm<CreateWorkoutFormData>({
+    resolver: zodResolver(createWorkoutSchema),
+    defaultValues: {
+      name: '',
+      exercises: [] // Inicialmente sem exercícios
+    }
+  })
 
-  const onSubmit = async (data: CreateWorkoutForm) => {
+  // Hook do react-hook-form para gerenciar arrays de campos
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "exercises"
+  })
+
+  // Função que será chamada quando o formulário for enviado
+  const onSubmit = async (data: CreateWorkoutFormData) => {
     try {
-      setError('')
-      // TODO: Implementar a criação do treino
-      console.log('Criar treino:', data)
+      setError(null)
+      
+      // Chamada da server action para criar o treino
+      await createWorkout({
+        name: data.name,
+        exercises: data.exercises.map(exercise => ({
+          name: exercise.name,
+          targetSets: exercise.targetSets,
+          targetRepsMin: exercise.targetRepsMin,
+          targetRepsMax: exercise.targetRepsMax
+        }))
+      })
+
+      // Redireciona para a lista de treinos
       router.push('/workouts')
+      
+      // Força um refresh dos dados e atualiza o cache do router
+      router.refresh()
+      
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('errors.unknown_error'))
+      // Tratamento de erro mais específico
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError(t('errors.unknown_error'))
+      }
+
+      // Log do erro para debugging
+      console.error('Erro ao criar treino:', err)
     }
   }
 
-  return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">
-        {t('workout.create_workout')}
-      </h1>
+  // Adiciona um novo exercício vazio ao formulário com valores padrão
+  const addExercise = () => {
+    append({
+      name: '',
+      targetSets: 3, // Valores padrão
+      targetRepsMin: 8,
+      targetRepsMax: 12,
+    })
+  }
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('workout.workout_details')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          asChild
+        >
+          <Link href="/workouts">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="sr-only">{t('common.back')}</span>
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('workout.create_workout')}
+          </h1>
+          <p className="text-muted-foreground">
+            {t('workout.create_workout_description')}
+          </p>
+        </div>
+      </div>
+
+      {/* Formulário */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Detalhes básicos do treino */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('workout.workout_details')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Nome do treino */}
             <div className="space-y-2">
-              <Label htmlFor="name">{t('workout.workout_name')}</Label>
+              <Label htmlFor="name">
+                {t('workout.workout_name')}
+              </Label>
               <Input
                 id="name"
-                {...register('name', { 
-                  required: t('errors.name_required') 
-                })}
+                {...register('name')}
+                placeholder={t('workout.workout_name_placeholder')}
               />
               {errors.name && (
                 <p className="text-sm text-destructive">
@@ -62,26 +171,190 @@ export default function NewWorkoutPage() {
                 </p>
               )}
             </div>
+          </CardContent>
+        </Card>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
+        {/* Lista de exercícios */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{t('workout.exercises_section')}</CardTitle>
+            <Button 
+              type="button"
+              variant="secondary" 
+              size="sm"
+              onClick={addExercise}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('workout.add_exercise')}
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Mensagem de nenhum exercício */}
+            {fields.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>{t('workout.no_exercises')}</p>
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={addExercise}
+                  className="mt-2"
+                >
+                  {t('workout.add_first_exercise')}
+                </Button>
+              </div>
             )}
 
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                {t('common.cancel')}
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? t('common.loading') : t('common.create')}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            {/* Lista de exercícios */}
+            {fields.map((field, index) => (
+              <div key={field.id} className="space-y-4">
+                {index > 0 && <Separator />}
+                
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">
+                    {t('workout.exercise')} {index + 1}
+                  </h3>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">
+                      {t('workout.remove_exercise')}
+                    </span>
+                  </Button>
+                </div>
+
+                {/* Nome do exercício */}
+                <div className="space-y-2">
+                  <Label>
+                    {t('workout.exercise_name')}
+                  </Label>
+                  <Input
+                    {...register(`exercises.${index}.name`)}
+                    placeholder={t('workout.exercise_name_placeholder')}
+                  />
+                  {errors.exercises?.[index]?.name && (
+                    <p className="text-sm text-destructive">
+                      {errors.exercises[index]?.name?.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Configurações do exercício em grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Número de séries */}
+                  <div className="space-y-2">
+                    <Label>
+                      {t('workout.target_sets')}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      {...register(`exercises.${index}.targetSets`)}
+                    />
+                    {errors.exercises?.[index]?.targetSets && (
+                      <p className="text-sm text-destructive">
+                        {errors.exercises[index]?.targetSets?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Range de repetições - Mínimo */}
+                  <div className="space-y-2">
+                    <Label>
+                      {t('workout.min_reps')}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={100}
+                      {...register(`exercises.${index}.targetRepsMin`)}
+                    />
+                    {errors.exercises?.[index]?.targetRepsMin && (
+                      <p className="text-sm text-destructive">
+                        {errors.exercises[index]?.targetRepsMin?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Range de repetições - Máximo */}
+                  <div className="space-y-2">
+                    <Label>
+                      {t('workout.max_reps')}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={100}
+                      {...register(`exercises.${index}.targetRepsMax`)}
+                    />
+                    {errors.exercises?.[index]?.targetRepsMax && (
+                      <p className="text-sm text-destructive">
+                        {errors.exercises[index]?.targetRepsMax?.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Erro geral de exercícios */}
+            {errors.exercises && (
+              <p className="text-sm text-destructive">
+                {errors.exercises.message}
+              </p>
+            )}
+            
+            {/* Botão de adicionar ao final da lista */}
+            {fields.length > 0 && (
+              <div className="flex justify-center pt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addExercise}
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t('workout.add_exercise')}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Erro geral */}
+        {error && (
+          <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Botões de ação */}
+        <div className="flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            asChild
+          >
+            <Link href="/workouts">
+              {t('common.cancel')}
+            </Link>
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting 
+              ? t('common.loading')
+              : t('common.create')
+            }
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }

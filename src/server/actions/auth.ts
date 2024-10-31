@@ -76,7 +76,7 @@ export async function login(data: LoginData) {
     }
   }
 
-  redirect('/dashboard')
+  redirect('/workouts')
 }
 
 export async function requestPasswordReset(data: PasswordResetRequestData) {
@@ -116,9 +116,8 @@ export async function resetPassword(data: PasswordResetData) {
     }
   }
 
-  redirect('/dashboard')
+  redirect('/workouts')
 }
-
 
 export async function logout(locale: string) {
   const supabase = await createClient()

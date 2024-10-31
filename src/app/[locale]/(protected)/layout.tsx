@@ -1,6 +1,5 @@
 // src/app/[locale]/(protected)/layout.tsx
 
-import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/layout/Sidebar'
