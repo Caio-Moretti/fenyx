@@ -99,7 +99,13 @@
     "start_session": "Iniciar Nova Sessão",
     "new_session_created": "Nova Sessão Criada",
     "click_to_start_tracking": "Clique abaixo para começar a registrar seu treino",
-    "go_to_session": "Ir para Sessão"
+    "start_new_session": "Iniciar Nova Sessão",
+    "session_number": "Treino #{number}",
+    "created_at": "criado em {date}",
+    "view_session": "Ver Sessão",
+    "go_to_session": "Começar Treino",
+    "loading_sessions": "Carregando sessões...",
+    "dashboard": "Resumo por Sessão"
   },
   "hero": {
     "tagline": "Acompanhe seus treinos com precisão"

@@ -1,3 +1,3 @@
 export * from './create'
-// export * from './sessions/get'
+export * from './get'
 // export * from './sessions/logSet'

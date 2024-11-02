@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Flame, Menu, Home, Dumbbell, User, LogOut, Loader2 } from 'lucide-react'
+import { Flame, Menu, LineChart, Dumbbell, User, LogOut, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { logout } from '@/server/actions/auth'
 
@@ -25,6 +25,11 @@ export function Sidebar() {
       label: t('workout.my_workouts'),
       icon: Dumbbell
     },
+    {
+      href: '/workouts/dashboard', // placeholder
+      label: t('workout.dashboard'),
+      icon: LineChart
+    }
   ]
 
   const handleLogout = () => {
