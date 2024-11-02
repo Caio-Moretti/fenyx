@@ -3,6 +3,8 @@
 /**
  * Tipos das tabelas do Supabase
  */
+
+// Tabela workouts
 export interface DbWorkout {
   id: string
   user_id: string
@@ -10,6 +12,7 @@ export interface DbWorkout {
   created_at: string
 }
 
+// Tabela workout_exercises
 export interface DbWorkoutExercise {
   id: string
   workout_id: string
@@ -21,12 +24,14 @@ export interface DbWorkoutExercise {
   created_at: string
 }
 
+// Tabela workout_sessions
 export interface DbWorkoutSession {
   id: string
   workout_id: string
   created_at: string
 }
 
+// Tabela exercise_sets
 export interface DbExerciseSet {
   id: string
   session_id: string
@@ -34,8 +39,20 @@ export interface DbExerciseSet {
   set_number: number
   weight: number
   reps: number
-  difficulty: number
+  difficulty: number // 0-5 (RIR invertido)
   created_at: string
+}
+
+// Tipos para JOIN queries
+export interface WorkoutWithExercises extends DbWorkout {
+  exercises: DbWorkoutExercise[]
+}
+
+export interface WorkoutSessionWithData extends DbWorkoutSession {
+  workout: WorkoutWithExercises
+  sets: Array<DbExerciseSet & {
+    exercise: DbWorkoutExercise
+  }>
 }
 
 /**

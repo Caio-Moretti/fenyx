@@ -21,44 +21,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
+import { createWorkoutSchema  } from './utils'
 
-// Schema de validação para o formulário
-const exerciseSchema = z.object({
-  name: z.string().min(1, 'Nome do exercício é obrigatório'),
-  targetSets: z.coerce
-    .number()
-    .min(1, 'Mínimo de 1 série')
-    .max(10, 'Máximo de 10 séries'),
-  targetRepsMin: z.coerce
-    .number()
-    .min(1, 'Mínimo de 1 repetição')
-    .max(100, 'Máximo de 100 repetições'),
-  targetRepsMax: z.coerce
-    .number()
-    .min(1, 'Mínimo de 1 repetição')
-    .max(100, 'Máximo de 100 repetições'),
-}).refine(data => {
-  // Validação adicional: max reps deve ser maior que min reps
-  return data.targetRepsMax >= data.targetRepsMin;
-}, {
-  message: 'O máximo de repetições deve ser maior ou igual ao mínimo',
-  path: ['targetRepsMax']
-});
-
-const createWorkoutSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  exercises: z.array(exerciseSchema)
-    .min(1, 'Adicione pelo menos um exercício'),
-})
-
-// Tipo inferido do schema
 type CreateWorkoutFormData = z.infer<typeof createWorkoutSchema>
 
 export default function CreateWorkoutPage() {
   const t = useTranslations()
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
-  
+
   const {
     register,
     control,
@@ -68,22 +39,19 @@ export default function CreateWorkoutPage() {
     resolver: zodResolver(createWorkoutSchema),
     defaultValues: {
       name: '',
-      exercises: [] // Inicialmente sem exercícios
+      exercises: [] 
     }
   })
 
-  // Hook do react-hook-form para gerenciar arrays de campos
   const { fields, append, remove } = useFieldArray({
     control,
     name: "exercises"
   })
 
-  // Função que será chamada quando o formulário for enviado
   const onSubmit = async (data: CreateWorkoutFormData) => {
     try {
       setError(null)
       
-      // Chamada da server action para criar o treino
       await createWorkout({
         name: data.name,
         exercises: data.exercises.map(exercise => ({
@@ -94,26 +62,20 @@ export default function CreateWorkoutPage() {
         }))
       })
 
-      // Redireciona para a lista de treinos
       router.push('/workouts')
       
-      // Força um refresh dos dados e atualiza o cache do router
       router.refresh()
       
     } catch (err) {
-      // Tratamento de erro mais específico
       if (err instanceof Error) {
         setError(err.message)
       } else {
         setError(t('errors.unknown_error'))
       }
 
-      // Log do erro para debugging
-      console.error('Erro ao criar treino:', err)
     }
   }
 
-  // Adiciona um novo exercício vazio ao formulário com valores padrão
   const addExercise = () => {
     append({
       name: '',

@@ -90,7 +90,16 @@
     "remove_exercise": "Remover Exercício",
     "start_workout": "Iniciar Treino",
     "no_exercises": "Nenhum exercício",
-    "total_sets": "Séries totais"
+    "total_sets": "Séries totais",
+    "sessions": "Sessões de Treino",
+    "sessions_description": "Histórico e registro de sessões deste treino",
+    "no_sessions_title": "Nenhuma Sessão Registrada",
+    "no_sessions_description": "Comece seu primeiro treino para registrar seu progresso",
+    "start_first_session": "Iniciar Primeira Sessão",
+    "start_session": "Iniciar Nova Sessão",
+    "new_session_created": "Nova Sessão Criada",
+    "click_to_start_tracking": "Clique abaixo para começar a registrar seu treino",
+    "go_to_session": "Ir para Sessão"
   },
   "hero": {
     "tagline": "Acompanhe seus treinos com precisão"
