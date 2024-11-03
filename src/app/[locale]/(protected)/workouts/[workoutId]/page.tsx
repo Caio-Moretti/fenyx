@@ -1,10 +1,10 @@
-// src/app/[locale]/(protected)/workouts/[workoutId]/page.tsx
+// src/app/[locale]/(protected)/workouts/[workoutId]/sessions/page.tsx
 'use client'
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, ArrowRight } from 'lucide-react'
+import { ArrowLeft, Plus, History } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,10 +13,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { startWorkoutSession } from '@/server/actions/sessions/index'
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions'
+import { useWorkout } from '@/hooks/useWorkout'
 import { formatDate } from '@/lib/dateUtils'
-import type { WorkoutSession } from '@/types/shared'
 
 interface WorkoutSessionsPageProps {
   params: {
@@ -28,38 +29,92 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
   const t = useTranslations()
   const [isStarting, setIsStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { sessions, isLoading, refresh } = useWorkoutSessions(params.workoutId)
-  const [newSession, setNewSession] = useState<WorkoutSession | null>(null)
+  const { sessions, isLoading: isLoadingSessions, error: sessionsError, refresh } = useWorkoutSessions(params.workoutId)
+  const { workout, isLoading: isLoadingWorkout, error: workoutError } = useWorkout(params.workoutId)
 
-  // Função para iniciar uma nova sessão
   const handleStartSession = async () => {
     try {
       setIsStarting(true)
       setError(null)
-
-      const session = await startWorkoutSession(params.workoutId)
-      setNewSession(session)
-      refresh() // Atualiza a lista de sessões
-      
+      await startWorkoutSession(params.workoutId)
+      refresh()
     } catch (err) {
       console.error('Error starting session:', err)
-      setError(
-        err instanceof Error 
-          ? err.message 
-          : t('errors.unknown_error')
-      )
+      setError(err instanceof Error ? err.message : t('errors.unknown_error'))
     } finally {
       setIsStarting(false)
     }
   }
 
+  // Loading states
+  if (isLoadingWorkout || isLoadingSessions) {
+    return (
+      <div className="max-w-lg mx-auto p-4">
+        {/* Header Skeleton */}
+        <div className="flex items-start gap-2 mb-8">
+          <div className="shrink-0 mt-1 w-10 h-10" /> {/* Button placeholder */}
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-8 w-32" /> {/* Title */}
+            <Skeleton className="h-6 w-48" /> {/* Subtitle */}
+          </div>
+        </div>
+
+        {/* Button Skeleton */}
+        <Skeleton className="w-full h-10 mb-6" />
+
+        {/* Sessions List Skeleton */}
+        <div className="space-y-3">
+          {[1, 2, 3].map((_, index) => (
+            <Card key={index} className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <Skeleton className="h-6 w-32 mb-2" />
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-10 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // Error states
+  if (workoutError || sessionsError) {
+    return (
+      <div className="max-w-lg mx-auto p-4">
+        <Card className="border-0 shadow-sm bg-destructive/10">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {t('errors.load_failed')}
+            </CardTitle>
+            <CardDescription>
+              {workoutError || sessionsError}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.reload()}
+              className="w-full"
+            >
+              {t('common.try_again')}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-lg mx-auto p-4">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-2 mb-8">
         <Button 
           variant="ghost" 
-          size="icon" 
+          size="icon"
+          className="shrink-0 mt-1" 
           asChild
         >
           <Link href="/workouts">
@@ -68,118 +123,93 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl font-bold mb-1">
             {t('workout.sessions')}
           </h1>
-          <p className="text-muted-foreground">
-            {t('workout.sessions_description')}
-          </p>
+          <h2 className="text-lg font-semibold text-primary">
+            {workout?.name}
+          </h2>
         </div>
       </div>
 
-      <div className="space-y-4">
-        {/* Sessão Nova (se existir) */}
-        {newSession && (
-          <Card className="relative overflow-hidden">
-            <CardHeader>
-              <CardTitle>
-                {t('workout.session_number', { 
-                  number: sessions.length + 1
-                })}
-              </CardTitle>
-              <CardDescription>
-                {t('workout.click_to_start_tracking')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button asChild className="w-full gap-2">
-                <Link href={`/workouts/${params.workoutId}/sessions/${newSession.id}`}>
-                  {t('workout.go_to_session')}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-            {/* Efeito de highlight */}
-            <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
-          </Card>
-        )}
-
-        {/* Estado vazio */}
-        {sessions.length === 0 && !newSession && (
-          <Card className="flex flex-col items-center justify-center p-8 text-center">
-            <CardHeader>
-              <CardTitle>{t('workout.no_sessions_title')}</CardTitle>
-              <CardDescription>
-                {t('workout.no_sessions_description')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                onClick={handleStartSession}
-                disabled={isStarting}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {isStarting 
-                  ? t('common.loading')
-                  : t('workout.start_first_session')
-                }
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Lista de Sessões */}
-        {sessions.length > 0 && (
+      {/* Start Session Button */}
+      <Button
+        onClick={handleStartSession}
+        disabled={isStarting}
+        className="w-full mb-6"
+      >
+        {isStarting ? (
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            {t('common.loading')}
+          </div>
+        ) : (
           <>
-            {/* Lista de sessões anteriores */}
-            {sessions.map((session, index) => (
-              <Card key={session.id}>
-                <CardHeader>
-                  <CardTitle className='text-red-600'>
+            <Plus className="h-4 w-4 mr-2" />
+            {t('workout.start_new_session')}
+          </>
+        )}
+      </Button>
+
+      {/* Sessions List */}
+      {sessions.length > 0 && (
+        <div className="space-y-3">
+          {sessions.map((session, index) => (
+            <Card key={session.id} className="border-0 shadow-sm hover:bg-accent/50 transition-colors">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg text-primary">
                     {t('workout.session_number', { 
                       number: sessions.length - index 
                     })}
                   </CardTitle>
-                  <CardDescription>
-                    {formatDate(session.createdAt)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link href={`/workouts/${params.workoutId}/sessions/${session.id}`}>
-                      {t('workout.view_session')}
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <History className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <CardDescription>
+                  {formatDate(session.createdAt)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full hover:bg-primary/10"
+                >
+                  <Link href={`/workouts/${params.workoutId}/sessions/${session.id}`}>
+                    {t('workout.view_session')}
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-            {/* Botão de nova sessão (se não houver uma em criação) */}
-            {!newSession && (
-              <Button
-                onClick={handleStartSession}
-                disabled={isStarting}
-                className="w-full gap-2 bg-red-600"
-                variant="outline"
-              >
-                <Plus className="h-4 w-4" />
-                {isStarting 
-                  ? t('common.loading')
-                  : t('workout.start_new_session')
-                }
-              </Button>
-            )}
-          </>
-        )}
+      {/* Empty State */}
+      {sessions.length === 0 && (
+        <Card className="text-center border-0 bg-muted/50 p-6">
+          <CardHeader>
+            <History className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+            <CardTitle className="text-lg">
+              {t('workout.no_sessions_title')}
+            </CardTitle>
+            <CardDescription>
+              {t('workout.no_sessions_description')}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
-        {/* Erro */}
-        {error && (
-          <p className="text-sm text-destructive mt-4">
-            {error}
-          </p>
-        )}
-      </div>
+      {/* Error Message */}
+      {error && (
+        <Card className="mt-4 border-0 bg-destructive/10">
+          <CardContent className="p-3">
+            <p className="text-sm text-destructive">
+              {error}
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

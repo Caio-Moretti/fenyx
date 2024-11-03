@@ -3,6 +3,7 @@
 export * from './create'
 export * from './delete'
 export * from './get'
+export * from './getWorkout'
 // export * from './sessions/create'
 // export * from './sessions/get'
 // export * from './sessions/logSet'

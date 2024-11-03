@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Suspense } from 'react'
+import { Container } from '@/components/layout/Container'
 
 async function getSession() {
   const supabase = await createClient()
@@ -37,8 +38,12 @@ export default async function ProtectedLayout({
         <Sidebar />
       </Suspense>
 
-      <main className="container mx-auto p-4 pt-16">
-        {children}
+      <div className="h-16 lg:hidden" />
+
+      <main className="lg:pl-80">
+        <Container>
+          {children}
+        </Container>
       </main>
     </div>
   )

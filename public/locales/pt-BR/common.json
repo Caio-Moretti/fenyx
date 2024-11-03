@@ -61,7 +61,8 @@
     "password_min_length": "A senha deve ter no mínimo 6 caracteres",
     "confirm_password_required": "Por favor, confirme sua senha",
     "unknown_error": "Ocorreu um erro inesperado. Por favor, tente novamente.",
-    "load_failed": "Falha ao carregar treinos"
+    "load_failed": "Falha ao carregar dados",
+    "session_not_found": "Sessão não encontrada ou acesso negado"
   },
   "workout": {
     "my_workouts": "Meus Treinos",
@@ -105,7 +106,20 @@
     "view_session": "Ver Sessão",
     "go_to_session": "Começar Treino",
     "loading_sessions": "Carregando sessões...",
-    "dashboard": "Resumo por Sessão"
+    "dashboard": "Resumo por Sessão",
+    "session_title": "{workoutName} | Sessão",
+    "sets_info": "{current} de {total} séries",
+    "session_summary": "Resumo da Sessão",
+    "total_volume": "Volume Total",
+    "sets_completed": "Séries Completadas",
+    "workout_sets_info": "{completed}/{total} séries",
+    "started_at": "Iniciado em",
+    "no_sets_recorded": "Nenhuma série registrada ainda",
+    "return_to_sessions": "Voltar para sessões",
+    "total_weight_lifted": "Peso total levantado",
+    "kg": "kg",
+    "progress": "Progresso do treino",
+    "session": "Sessão"
   },
   "hero": {
     "tagline": "Acompanhe seus treinos com precisão"

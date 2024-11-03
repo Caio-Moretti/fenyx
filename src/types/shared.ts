@@ -7,20 +7,16 @@ import type {
   DbExerciseSet 
 } from './database'
 
-/**
- * Interface de um treino com seus exercícios
- */
+
 export interface Workout {
   id: string
   userId: string
   name: string
   createdAt: string
-  exercises: WorkoutExercise[] // Relacionamento com exercícios
+  exercises: WorkoutExercise[]
 }
 
-/**
- * Interface de um exercício em um treino
- */
+
 export interface WorkoutExercise {
   id: string
   workoutId: string
@@ -30,23 +26,23 @@ export interface WorkoutExercise {
   targetRepsMin: number
   targetRepsMax: number
   createdAt: string
-  sets?: ExerciseSet[] // Opcional, carregado quando necessário
+  sets?: ExerciseSet[]
 }
 
-/**
- * Interface de uma sessão de treino
- */
+
 export interface WorkoutSession {
   id: string
   workoutId: string
   createdAt: string
-  workout?: Workout // Opcional, carregado quando necessário
-  sets: ExerciseSet[] // Séries realizadas nesta sessão
+  workout?: {
+    id: string
+    name: string
+    exercises: WorkoutExercise[]
+  }
+  sets: ExerciseSet[]
 }
 
-/**
- * Interface de uma série realizada
- */
+
 export interface ExerciseSet {
   id: string
   sessionId: string
@@ -56,19 +52,17 @@ export interface ExerciseSet {
   reps: number
   difficulty: number // 0-5 (RIR/RPE invertido)
   createdAt: string
-  exercise?: WorkoutExercise // Opcional, carregado quando necessário
+  exercise?: WorkoutExercise
 }
 
-/**
- * Funções para converter tipos do banco para tipos da aplicação
- */
+
 export function dbToWorkout(db: DbWorkout): Workout {
   return {
     id: db.id,
     userId: db.user_id,
     name: db.name,
     createdAt: db.created_at,
-    exercises: [] // Precisa ser preenchido separadamente
+    exercises: []
   }
 }
 
@@ -90,7 +84,7 @@ export function dbToWorkoutSession(db: DbWorkoutSession): WorkoutSession {
     id: db.id,
     workoutId: db.workout_id,
     createdAt: db.created_at,
-    sets: [] // Precisa ser preenchido separadamente
+    sets: []
   }
 }
 

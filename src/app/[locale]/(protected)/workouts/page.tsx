@@ -26,6 +26,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useWorkouts } from '@/hooks/useWorkouts'
 import { deleteWorkout } from '@/server/actions/workouts/index'
+import { Container } from '@/components/layout/Container'
+import { PageHeader } from '@/components/layout/PageHeader'
 
 export default function WorkoutsPage() {
   const t = useTranslations()
@@ -62,7 +64,7 @@ export default function WorkoutsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <Container className="space-y-6">
         {/* Header Skeleton */}
         <div className="flex items-center justify-between">
           <div className="space-y-2">
@@ -86,49 +88,45 @@ export default function WorkoutsPage() {
             </Card>
           ))}
         </div>
-      </div>
+      </Container>
     )
   }
 
   // Error state
   if (error) {
     return (
-      <Card className="flex flex-col items-center justify-center p-8 text-center">
-        <CardHeader>
-          <CardTitle className="text-destructive">{t('errors.load_failed')}</CardTitle>
-          <CardDescription>{error}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.reload()}
-          >
-            {t('common.try_again')}
-          </Button>
-        </CardContent>
-      </Card>
+      <Container>
+        <Card className="flex flex-col items-center justify-center p-8 text-center">
+          <CardHeader>
+            <CardTitle className="text-destructive">{t('errors.load_failed')}</CardTitle>
+            <CardDescription>{error}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.reload()}
+            >
+              {t('common.try_again')}
+            </Button>
+          </CardContent>
+        </Card>
+      </Container>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <Container className="space-y-6">
       {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('workout.my_workouts')}
-          </h1>
-          <p className="text-muted-foreground">
-            {t('workout.manage_description')}
-          </p>
-        </div>
-        
+      <PageHeader
+        title={t('workout.my_workouts')}
+        description={t('workout.manage_description')}
+      >
         <Button asChild>
           <Link href="/workouts/new">
             {t('workout.create_workout')}
           </Link>
         </Button>
-      </div>
+      </PageHeader>
 
       {/* Workouts Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -167,19 +165,6 @@ export default function WorkoutsPage() {
                         </span>
                       </div>
                     </div>
-
-                    {/* Sessões realizadas */}
-                    {/* <div className="flex items-center gap-3 text-muted-foreground">
-                      <History className="h-5 w-5 text-primary" />
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-medium text-foreground">
-                          {workout.completedSessions || 0}
-                        </span>
-                        <span className="text-sm">
-                          {t('workout.completed_sessions')}
-                        </span>
-                      </div>
-                    </div> */}
                   </div>
                 </CardContent>
               </CardHeader>
@@ -237,6 +222,6 @@ export default function WorkoutsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Container>
   )
 }
