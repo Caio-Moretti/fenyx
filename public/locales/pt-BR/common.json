@@ -62,7 +62,10 @@
     "confirm_password_required": "Por favor, confirme sua senha",
     "unknown_error": "Ocorreu um erro inesperado. Por favor, tente novamente.",
     "load_failed": "Falha ao carregar dados",
-    "session_not_found": "Sessão não encontrada ou acesso negado"
+    "session_not_found": "Sessão não encontrada ou acesso negado",
+    "session_load_failed": "Falha ao carregar sessão de treino",
+    "exercise_not_found": "Exercício não encontrado",
+    "set_log_failed": "Falha ao registrar série"
   },
   "workout": {
     "my_workouts": "Meus Treinos",
@@ -119,7 +122,28 @@
     "total_weight_lifted": "Peso total levantado",
     "kg": "kg",
     "progress": "Progresso do treino",
-    "session": "Sessão"
+    "session": "Sessão",
+    "tracking": {
+      "exercise": "Exercício",
+      "exercise_list": "Lista de Exercícios",
+      "set": "Série",
+      "weight": "Peso",
+      "reps": "Repetições",
+      "difficulty": "RIR",
+      "set_1": "Série {number}",
+      "set_of": "Série {current} / {total}",
+      "view_previous": "Ver Sessão Anterior",
+      "previous": "Anterior",
+      "target_reps": "Repetições alvo",
+      "log_set": "Registrar Série",
+      "set_logged": "Série Registrada",
+      "set_logged_description": "{exercise} - Série {setNumber} registrada com sucesso",
+      "session_started": "Iniciado às {time}",
+      "sets_completed": "Séries Feitas",
+      "exercises_completed": "Exercício",
+      "rir": "RIR"
+    }
+    
   },
   "hero": {
     "tagline": "Acompanhe seus treinos com precisão"

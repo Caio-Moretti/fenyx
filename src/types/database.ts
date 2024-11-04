@@ -2,6 +2,7 @@
 
 /**
  * Tipos das tabelas do Supabase
+ * Representam a estrutura exata das tabelas no banco
  */
 
 // Tabela workouts
@@ -28,6 +29,8 @@ export interface DbWorkoutExercise {
 export interface DbWorkoutSession {
   id: string
   workout_id: string
+  started_at: string  // Adicionado para tracking de início da sessão
+  finished_at: string | null  // Adicionado para tracking de fim da sessão
   created_at: string
 }
 
@@ -43,32 +46,62 @@ export interface DbExerciseSet {
   created_at: string
 }
 
-// Tipos para JOIN queries
+/**
+ * Tipos para consultas com JOIN
+ * Representam a estrutura dos dados quando fazemos queries mais complexas
+ */
 export interface WorkoutWithExercises extends DbWorkout {
   exercises: DbWorkoutExercise[]
 }
 
+export interface ExerciseSetWithExercise extends DbExerciseSet {
+  exercise: DbWorkoutExercise
+}
+
 export interface WorkoutSessionWithData extends DbWorkoutSession {
   workout: WorkoutWithExercises
-  sets: Array<DbExerciseSet & {
-    exercise: DbWorkoutExercise
-  }>
+  sets: ExerciseSetWithExercise[]
+}
+
+/**
+ * Tipos para consultas específicas
+ * Úteis para quando precisamos de uma estrutura particular dos dados
+ */
+export interface SessionExerciseProgress {
+  exercise_id: string
+  completed_sets: number
+  total_volume: number // peso * reps
+  avg_difficulty: number
 }
 
 /**
  * Tipos para operações de inserção
- * Omitimos campos gerados automaticamente
+ * Omitimos campos gerados automaticamente pelo banco
  */
 export type NewWorkout = Omit<DbWorkout, 'id' | 'created_at'>
 export type NewWorkoutExercise = Omit<DbWorkoutExercise, 'id' | 'created_at'>
-export type NewWorkoutSession = Omit<DbWorkoutSession, 'id' | 'created_at'>
+export type NewWorkoutSession = Omit<DbWorkoutSession, 'id' | 'created_at' | 'finished_at'>
 export type NewExerciseSet = Omit<DbExerciseSet, 'id' | 'created_at'>
 
 /**
  * Tipos para operações de atualização
- * Todos os campos são opcionais
+ * Todos os campos são opcionais pois podemos atualizar apenas parte dos dados
  */
 export type UpdateWorkout = Partial<NewWorkout>
 export type UpdateWorkoutExercise = Partial<NewWorkoutExercise>
 export type UpdateWorkoutSession = Partial<NewWorkoutSession>
 export type UpdateExerciseSet = Partial<NewExerciseSet>
+
+/**
+ * Tipos para respostas de queries
+ * Útil para tipar corretamente as respostas do Supabase
+ */
+export interface QueryResult<T> {
+  data: T | null
+  error: Error | null
+}
+
+export interface QueryResultList<T> {
+  data: T[]
+  error: Error | null
+}

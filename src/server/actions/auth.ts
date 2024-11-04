@@ -53,7 +53,7 @@ export async function register(data: RegisterData) {
     return { error: 'Este email já está associado a uma conta. Tente recuperar sua senha.' }
   }
 
-  redirect('/auth/verify-email')
+  redirect('/pt-BR/verify-email')
 }
 
 export async function login(data: LoginData) {
