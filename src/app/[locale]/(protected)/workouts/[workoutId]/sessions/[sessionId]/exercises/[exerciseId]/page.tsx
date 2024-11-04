@@ -9,9 +9,10 @@ import { WorkoutSessionTracker } from '@/components/workout/WorkoutSessionTracke
 import type { WorkoutSession } from '@/types/shared'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
+import { getPreviousSession } from '@/server/actions/sessions/getPrevious'
 
 export default function WorkoutExercisePage() {
   const t = useTranslations('workout')
@@ -37,9 +38,14 @@ export default function WorkoutExercisePage() {
         const sessionData = await getWorkoutSession(sessionId)
         setSession(sessionData)
 
-        // TODO: Implementar carregamento da sessão anterior
-        // const previousSessionData = await getPreviousSession(workoutId as string)
-        // setPreviousSession(previousSessionData)
+        try {
+          const previousSessionData = await getPreviousSession(workoutId as string)
+          setPreviousSession(previousSessionData)
+        } catch (err) {
+          // Se falhar ao buscar a sessão anterior, apenas logamos o erro
+          // mas não quebramos a experiência do usuário
+          console.error('Error loading previous session:', err)
+        }
 
       } catch (error) {
         console.error('Error loading session:', error)
@@ -109,30 +115,26 @@ export default function WorkoutExercisePage() {
   }
 
   return (
-    <div className="container max-w-2xl mx-auto py-6 space-y-6">
-      {/* Cabeçalho da página */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {session.workout?.name}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('tracking.session_started', {
-              time: new Date(session.createdAt).toLocaleTimeString()
-            })}
-          </p>
-        </div>
-
-        <Button
-          variant="outline"
+    <div className="container max-w-2xl mx-auto py-4 space-y-6">
+      {/* Cabeçalho com título centralizado */}
+      <div className="relative flex items-center justify-center"> {/* Mudamos para justify-center */}
+        <Button 
+          variant="ghost" 
+          size="icon"
           asChild
+          className="absolute left-0" // Posicionamento absoluto para não afetar o centro
         >
           <Link href={`/workouts/${workoutId}/sessions/${sessionId}`}>
-            {t('tracking.exercise_list')}
+            <ArrowLeft className="h-5 w-5" />
+            <span className="sr-only">{t('common.back')}</span>
           </Link>
         </Button>
-      </div>
 
+        <h1 className="text-2xl font-bold">
+          {currentExercise?.name}
+        </h1>
+      </div>
+  
       {/* Tracker do exercício */}
       <WorkoutSessionTracker
         session={session}

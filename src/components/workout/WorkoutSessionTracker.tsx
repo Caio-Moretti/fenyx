@@ -24,92 +24,60 @@ interface WorkoutSessionTrackerProps {
 
 export function WorkoutSessionTracker({ 
   session, 
-  previousSession 
+  previousSession,
+  initialExerciseId
 }: WorkoutSessionTrackerProps) {
   const t = useTranslations('workout')
   const { toast } = useToast()
   
-  // Estado para controlar exercício e série atual
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
-  const [currentSetNumbers, setCurrentSetNumbers] = useState<Record<string, number>>(() => {
-    // Inicializa com 1 para cada exercício
-    if (session.workout?.exercises) {
-      return Object.fromEntries(
-        session.workout.exercises.map(ex => [ex.id, 1])
-      )
-    }
-    return {}
-  })
+  // Removemos o estado currentExerciseIndex pois agora lidamos com apenas um exercício
+  const currentExercise = session.workout?.exercises.find(
+    ex => ex.id === initialExerciseId
+  )
 
-  const handlePreviousExercise = useCallback(() => {
-    if (currentExerciseIndex > 0) {
-      setCurrentExerciseIndex(prev => prev - 1)
-    }
-  }, [currentExerciseIndex])
+  // Mantemos apenas o estado das séries para o exercício atual
+  const [currentSetNumber, setCurrentSetNumber] = useState(1)
 
-  const handleNextExercise = useCallback(() => {
-    if (!session.workout?.exercises) return
-    
-    if (currentExerciseIndex < session.workout.exercises.length - 1) {
-      setCurrentExerciseIndex(prev => prev + 1)
-    }
-  }, [currentExerciseIndex, session.workout?.exercises])
-
+  // Simplificamos as funções de navegação apenas para séries
   const handlePreviousSet = useCallback(() => {
-    const currentExercise = session.workout?.exercises?.[currentExerciseIndex]
-    if (!currentExercise) return
-
-    if (currentSetNumbers[currentExercise.id] > 1) {
-      setCurrentSetNumbers(prev => ({
-        ...prev,
-        [currentExercise.id]: prev[currentExercise.id] - 1
-      }))
+    if (currentSetNumber > 1) {
+      setCurrentSetNumber(prev => prev - 1)
     }
-  }, [currentExerciseIndex, currentSetNumbers, session.workout?.exercises])
+  }, [currentSetNumber])
 
   const handleNextSet = useCallback(() => {
-    const currentExercise = session.workout?.exercises?.[currentExerciseIndex]
     if (!currentExercise?.targetSets) return
-
-    if (currentSetNumbers[currentExercise.id] < currentExercise.targetSets) {
-      setCurrentSetNumbers(prev => ({
-        ...prev,
-        [currentExercise.id]: prev[currentExercise.id] + 1
-      }))
+    if (currentSetNumber < currentExercise.targetSets) {
+      setCurrentSetNumber(prev => prev + 1)
     }
-  }, [currentExerciseIndex, currentSetNumbers, session.workout?.exercises])
+  }, [currentExercise?.targetSets, currentSetNumber])
 
   const handleLogSet = useCallback(async (data: {
     weight: number
     reps: number
     difficulty: number
   }) => {
-    const currentExercise = session.workout?.exercises?.[currentExerciseIndex]
-    if (!session.workout?.exercises || !currentExercise) return
+    if (!currentExercise) return
 
     try {
-      // Registra a série
       await logSet({
         sessionId: session.id,
         exerciseId: currentExercise.id,
-        setNumber: currentSetNumbers[currentExercise.id],
+        setNumber: currentSetNumber,
         ...data
       })
 
-      // Feedback de sucesso
       toast({
         title: t('tracking.set_logged'),
         description: t('tracking.set_logged_description', {
           exercise: currentExercise.name,
-          setNumber: currentSetNumbers[currentExercise.id]
+          setNumber: currentSetNumber
         })
       })
 
-      // Avança para próxima série ou exercício
-      if (currentSetNumbers[currentExercise.id] < currentExercise.targetSets) {
+      // Avança para próxima série se houver
+      if (currentSetNumber < currentExercise.targetSets) {
         handleNextSet()
-      } else if (currentExerciseIndex < session.workout.exercises.length - 1) {
-        handleNextExercise()
       }
       
     } catch (error) {
@@ -120,30 +88,8 @@ export function WorkoutSessionTracker({
         description: t('errors.try_again')
       })
     }
-  }, [
-    currentExerciseIndex,
-    currentSetNumbers,
-    session.id,
-    session.workout?.exercises,
-    t,
-    toast,
-    handleNextSet,
-    handleNextExercise
-  ])
+  }, [currentExercise, currentSetNumber, session.id, t, toast, handleNextSet])
 
-  if (!session.workout?.exercises?.length) {
-    return (
-      <Card>
-        <CardContent className="py-8 text-center">
-          <p className="text-muted-foreground">
-            {t('errors.no_workout_data')}
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  const currentExercise = session.workout.exercises[currentExerciseIndex]
   if (!currentExercise) {
     return null
   }
@@ -158,44 +104,15 @@ export function WorkoutSessionTracker({
 
   return (
     <div className="space-y-6">
-      {/* Cabeçalho com navegação entre exercícios */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handlePreviousExercise}
-              disabled={currentExerciseIndex === 0}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-
-            <CardTitle>
-              {currentExercise.name}
-            </CardTitle>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNextExercise}
-              disabled={!session.workout?.exercises || currentExerciseIndex === session.workout.exercises.length - 1}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm text-muted-foreground text-center">
-            {t('tracking.target_reps')}: {currentExercise.targetRepsMin}-{currentExercise.targetRepsMax}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Aqui pode ficar o target de repetições se quiser */}
+      <div className="text-sm text-muted-foreground text-center">
+        {t('tracking.target_reps')}: {currentExercise.targetRepsMin}-{currentExercise.targetRepsMax}
+      </div>
 
       {/* Componente de registro de séries */}
       <SetLogger
         exerciseId={currentExercise.id}
-        currentSetNumber={currentSetNumbers[currentExercise.id]}
+        currentSetNumber={currentSetNumber}
         totalSets={currentExercise.targetSets}
         previousSets={previousSets}
         onPreviousSet={handlePreviousSet}
@@ -203,16 +120,11 @@ export function WorkoutSessionTracker({
         onLogSet={handleLogSet}
       />
 
-      {/* Status do exercício atual */}
+      {/* Status do exercício */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>
-              {t('tracking.sets_completed')}: {currentExerciseSets.length}/{currentExercise.targetSets}
-            </span>
-            <span>
-              {t('tracking.exercise')}: {currentExerciseIndex + 1}/{session.workout.exercises.length}
-            </span>
+          <div className="text-sm text-muted-foreground text-center">
+            {t('tracking.sets_completed')}: {currentExerciseSets.length}/{currentExercise.targetSets}
           </div>
         </CardContent>
       </Card>
