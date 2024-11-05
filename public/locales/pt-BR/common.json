@@ -123,6 +123,13 @@
     "kg": "kg",
     "progress": "Progresso do treino",
     "session": "Sessão",
+    "sessions_words" : {
+      "history": "Histórico de Treinos",
+      "select_session": "Selecionar Sessão",
+      "no_sets_recorded": "Nenhuma série registrada",
+      "workout_number": "Treino #{number}",
+      "session_date": "{date} às {time}"
+    },
     "tracking": {
       "exercise": "Exercício",
       "exercise_list": "Lista de Exercícios",

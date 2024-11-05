@@ -1,4 +1,4 @@
-// src/app/[locale]/(protected)/workouts/[workoutId]/sessions/page.tsx
+// src/app/[locale]/(protected)/workouts/[workoutId]/page.tsx
 'use client'
 
 import { useTranslations } from 'next-intl'

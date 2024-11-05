@@ -179,7 +179,7 @@ const SidebarContent = () => {
     {
       title: t('workout.dashboard'),
       icon: BarChart2,
-      href: '/workouts/dashboard',
+      href: '/workouts',
       isNew: true
     }
   ]
