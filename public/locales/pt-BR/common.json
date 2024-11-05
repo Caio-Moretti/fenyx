@@ -132,7 +132,8 @@
       "select_session": "Selecionar Sessão",
       "no_sets_recorded": "Nenhuma série registrada",
       "workout_number": "Treino #{number}",
-      "session_date": "{date} às {time}"
+      "session_date": "{date} às {time}",
+      "no_sessions": "Nenhuma sessão registrada"
     },
     "tracking": {
       "exercise": "Exercício",

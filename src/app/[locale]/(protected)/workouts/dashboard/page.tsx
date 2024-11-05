@@ -259,7 +259,7 @@ export default function WorkoutSessionsPage() {
         <Card className="mx-auto">
           <CardContent className="py-8 space-y-4 text-center">
             <p className="text-muted-foreground">
-              {t('workout.sessions.no_sessions')}
+              {t('workout.sessions_words.no_sessions')}
             </p>
             <Button asChild variant="outline">
               <Link href={`/workouts/${selectedWorkoutId}`}>
