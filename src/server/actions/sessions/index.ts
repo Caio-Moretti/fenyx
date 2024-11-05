@@ -1,3 +1,5 @@
 export * from './create'
 export * from './get'
+export * from './getPrevious'
+// export * from './deleteSession'
 export * from './logSet'

@@ -4,7 +4,7 @@
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, History } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,11 +13,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton'
 import { startWorkoutSession } from '@/server/actions/sessions/index'
+import { deleteSession } from '@/server/actions/sessions/deleteSession'
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions'
 import { useWorkout } from '@/hooks/useWorkout'
 import { formatDate } from '@/lib/dateUtils'
+import { useToast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
 
 interface WorkoutSessionsPageProps {
   params: {
@@ -27,8 +40,11 @@ interface WorkoutSessionsPageProps {
 
 export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps) {
   const t = useTranslations()
+  const { toast } = useToast()
   const [isStarting, setIsStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
   const { sessions, isLoading: isLoadingSessions, error: sessionsError, refresh } = useWorkoutSessions(params.workoutId)
   const { workout, isLoading: isLoadingWorkout, error: workoutError } = useWorkout(params.workoutId)
 
@@ -46,16 +62,42 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
     }
   }
 
+  const handleDeleteSession = async () => {
+    if (!sessionToDelete) return
+
+    try {
+      setIsDeleting(true)
+      await deleteSession(sessionToDelete)
+      
+      toast({
+        title: t('workout.session_deleted'),
+        description: t('workout.session_deleted_description'),
+      })
+      
+      refresh()
+      setSessionToDelete(null)
+    } catch (err) {
+      console.error('Error deleting session:', err)
+      toast({
+        variant: 'destructive',
+        title: t('errors.delete_failed'),
+        description: err instanceof Error ? err.message : t('errors.unknown_error')
+      })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   // Loading states
   if (isLoadingWorkout || isLoadingSessions) {
     return (
       <div className="max-w-lg mx-auto p-4">
         {/* Header Skeleton */}
         <div className="flex items-start gap-2 mb-8">
-          <div className="shrink-0 mt-1 w-10 h-10" /> {/* Button placeholder */}
+          <div className="shrink-0 mt-1 w-10 h-10" />
           <div className="space-y-2 flex-1">
-            <Skeleton className="h-8 w-32" /> {/* Title */}
-            <Skeleton className="h-6 w-48" /> {/* Subtitle */}
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-6 w-48" />
           </div>
         </div>
 
@@ -155,25 +197,42 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
       {sessions.length > 0 && (
         <div className="space-y-3">
           {sessions.map((session, index) => (
-            <Card key={session.id} className="border-0 shadow-sm hover:bg-accent/50 transition-colors">
+            <Card 
+              key={session.id} 
+              className={cn(
+                "border border-border/50 shadow-sm",
+                "transition-colors hover:border-border",
+                "active:bg-accent/50 focus-within:border-border"
+              )}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-primary">
-                    {t('workout.session_number', { 
-                      number: sessions.length - index 
-                    })}
-                  </CardTitle>
-                  <History className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <CardTitle className="text-lg text-primary">
+                      {t('workout.session_number', { 
+                        number: sessions.length - index 
+                      })}
+                    </CardTitle>
+                    <CardDescription>
+                      {formatDate(session.createdAt)}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive focus:text-destructive"
+                    onClick={() => setSessionToDelete(session.id)}
+                  >
+                    <Trash2 className="h-4 w-4"/>
+                    <span className="sr-only">{t('common.delete')}</span>
+                  </Button>
                 </div>
-                <CardDescription>
-                  {formatDate(session.createdAt)}
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
                   asChild 
                   variant="outline" 
-                  className="w-full hover:bg-primary/10"
+                  className="w-full"
                 >
                   <Link href={`/workouts/${params.workoutId}/sessions/${session.id}`}>
                     {t('workout.view_session')}
@@ -187,9 +246,8 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
 
       {/* Empty State */}
       {sessions.length === 0 && (
-        <Card className="text-center border-0 bg-muted/50 p-6">
+        <Card className="text-center border border-border/50 p-6">
           <CardHeader>
-            <History className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
             <CardTitle className="text-lg">
               {t('workout.no_sessions_title')}
             </CardTitle>
@@ -210,6 +268,35 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog 
+        open={!!sessionToDelete} 
+        onOpenChange={() => setSessionToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('workout.delete_session_confirmation_title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('workout.delete_session_confirmation_description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSession}
+              disabled={isDeleting}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isDeleting ? t('common.loading') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

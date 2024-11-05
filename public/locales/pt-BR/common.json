@@ -122,6 +122,10 @@
     "total_weight_lifted": "Peso total levantado",
     "kg": "kg",
     "progress": "Progresso do treino",
+    "delete_session_confirmation_title": "Excluir sessão?",
+    "delete_session_confirmation_description": "Esta ação não pode ser desfeita. Todos os dados desta sessão serão excluídos permanentemente.",
+    "session_deleted": "Sessão excluída",
+    "session_deleted_description": "A sessão foi excluída com sucesso",
     "session": "Sessão",
     "sessions_words" : {
       "history": "Histórico de Treinos",
