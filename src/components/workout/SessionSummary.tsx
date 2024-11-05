@@ -39,16 +39,6 @@ export function SessionSummary({
 
   return (
     <div className="space-y-6">
-      {/* Título do Treino com Ícone */}
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Dumbbell className="h-5 w-5 text-primary" />
-        </div>
-        <h2 className="text-xl font-bold">
-          {currentSession.workout.name}
-        </h2>
-      </div>
-
       {/* Seletor de Sessão Estilizado */}
       <div className="relative">
         <Select

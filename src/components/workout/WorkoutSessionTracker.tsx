@@ -3,23 +3,15 @@
 
 import { useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { SetLogger } from './SetLogger'
 import { useToast } from '@/hooks/use-toast'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { logSet } from '@/server/actions/sessions/index'
 import type { WorkoutSession } from '@/types/shared'
+import { SetLogger } from './SetLogger'
 
 interface WorkoutSessionTrackerProps {
-    session: WorkoutSession
-    previousSession?: WorkoutSession
-    initialExerciseId: string  // Novo: ID do exercício inicial
+  session: WorkoutSession
+  previousSession?: WorkoutSession
+  initialExerciseId: string
 }
 
 export function WorkoutSessionTracker({ 
@@ -30,7 +22,7 @@ export function WorkoutSessionTracker({
   const t = useTranslations('workout')
   const { toast } = useToast()
   
-  // Removemos o estado currentExerciseIndex pois agora lidamos com apenas um exercício
+  // Encontra o exercício atual baseado no ID
   const currentExercise = session.workout?.exercises.find(
     ex => ex.id === initialExerciseId
   )
@@ -38,7 +30,12 @@ export function WorkoutSessionTracker({
   // Mantemos apenas o estado das séries para o exercício atual
   const [currentSetNumber, setCurrentSetNumber] = useState(1)
 
-  // Simplificamos as funções de navegação apenas para séries
+  // Filtra as séries do exercício atual
+  const currentExerciseSets = session.sets.filter(
+    set => set.exerciseId === initialExerciseId
+  ).sort((a, b) => a.setNumber - b.setNumber) // Garante ordem correta das séries
+
+  // Funções de navegação entre séries
   const handlePreviousSet = useCallback(() => {
     if (currentSetNumber > 1) {
       setCurrentSetNumber(prev => prev - 1)
@@ -75,7 +72,7 @@ export function WorkoutSessionTracker({
         })
       })
 
-      // Avança para próxima série se houver
+      // Avança para próxima série automaticamente se houver
       if (currentSetNumber < currentExercise.targetSets) {
         handleNextSet()
       }
@@ -94,17 +91,14 @@ export function WorkoutSessionTracker({
     return null
   }
 
+  // Filtra as séries do exercício na sessão anterior
   const previousSets = previousSession?.sets.filter(
     set => set.exerciseId === currentExercise.id
-  ) ?? []
-
-  const currentExerciseSets = session.sets.filter(
-    set => set.exerciseId === currentExercise.id
-  )
+  ).sort((a, b) => a.setNumber - b.setNumber) ?? []
 
   return (
     <div className="space-y-6">
-      {/* Aqui pode ficar o target de repetições se quiser */}
+      {/* Target de repetições */}
       <div className="text-sm text-muted-foreground text-center">
         {t('tracking.target_reps')}: {currentExercise.targetRepsMin}-{currentExercise.targetRepsMax}
       </div>
@@ -112,22 +106,15 @@ export function WorkoutSessionTracker({
       {/* Componente de registro de séries */}
       <SetLogger
         exerciseId={currentExercise.id}
+        sessionId={session.id}
         currentSetNumber={currentSetNumber}
         totalSets={currentExercise.targetSets}
         previousSets={previousSets}
+        currentExerciseSets={currentExerciseSets}
         onPreviousSet={handlePreviousSet}
         onNextSet={handleNextSet}
         onLogSet={handleLogSet}
       />
-
-      {/* Status do exercício */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-sm text-muted-foreground text-center">
-            {t('tracking.sets_completed')}: {currentExerciseSets.length}/{currentExercise.targetSets}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

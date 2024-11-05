@@ -167,7 +167,7 @@ export default function SessionExercisesPage({ params }: SessionExercisesPagePro
 
       {/* Card de Resumo da Sessão como botão */}
       <Link 
-        href={`/workouts/${params.workoutId}/sessions/`}
+        href={`/workouts/dashboard`}
         className="block mt-6"
       >
         <Card 
