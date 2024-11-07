@@ -178,7 +178,7 @@ export function SetLogger({
                 <div className="flex items-center justify-center gap-6 text-muted-foreground">
                   <span>{currentLoggedSet.weight}kg</span>
                   <span>{currentLoggedSet.reps} reps</span>
-                  <span>RIR {currentLoggedSet.difficulty}</span>
+                  <span>RIR {currentLoggedSet.difficulty === 5 ? "5+" : currentLoggedSet.difficulty}</span>
                 </div>
               </div>
             </div>
@@ -239,33 +239,22 @@ export function SetLogger({
             </div>
 
             {/* RIR em linha única */}
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-medium">
-                <Clock className="h-4 w-4 text-primary" />
-                {t('tracking.rir')}
-              </label>
-              <div className="grid grid-cols-6 gap-2">
-                {[0, 1, 2, 3, 4, 5].map((value) => (
-                  <Button
-                    key={value}
-                    type="button"
-                    variant={formData.difficulty === value.toString() ? "default" : "outline"}
-                    className={cn(
-                      "h-12 text-lg font-medium",
-                      formData.difficulty === value.toString() && "bg-primary hover:bg-primary/90"
-                    )}
-                    onClick={() => setFormData(prev => ({ ...prev, difficulty: value.toString() }))}
-                  >
-                    {value}
-                  </Button>
-                ))}
-              </div>
-              {previousSets?.[currentSetNumber - 1] && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <RotateCcw className="h-3 w-3" />
-                  RIR {previousSets[currentSetNumber - 1].difficulty}
-                </p>
-              )}
+            <div className="grid grid-cols-6 gap-2">
+              {[0, 1, 2, 3, 4, 5].map((value) => (
+                <Button
+                  key={value}
+                  type="button"
+                  variant={formData.difficulty === value.toString() ? "default" : "outline"}
+                  className={cn(
+                    "h-12 text-lg font-medium",
+                    value === 5 && "text-md", // Texto menor para o "5+"
+                    formData.difficulty === value.toString() && "bg-primary hover:bg-primary/90"
+                  )}
+                  onClick={() => setFormData(prev => ({ ...prev, difficulty: value.toString() }))}
+                >
+                  {value === 5 ? "5+" : value}
+                </Button>
+              ))}
             </div>
           </div>
         )}
@@ -355,7 +344,7 @@ export function SetLogger({
                             "text-emerald-400/90"
                           )}
                         >
-                          {set.difficulty}
+                          {set.difficulty === 5 ? "5+" : set.difficulty}
                         </span>
                       </div>
                     </div>

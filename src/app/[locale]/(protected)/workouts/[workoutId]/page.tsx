@@ -24,7 +24,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton'
-import { startWorkoutSession } from '@/server/actions/sessions/index'
 import { deleteSession } from '@/server/actions/sessions/deleteSession'
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions'
 import { useWorkout } from '@/hooks/useWorkout'
@@ -41,24 +40,27 @@ interface WorkoutSessionsPageProps {
 export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps) {
   const t = useTranslations()
   const { toast } = useToast()
-  const [isStarting, setIsStarting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const { sessions, isLoading: isLoadingSessions, error: sessionsError, refresh } = useWorkoutSessions(params.workoutId)
+  const { 
+    sessions, 
+    isLoading: isLoadingSessions, 
+    error: sessionsError, 
+    refresh,
+    startSession,
+    isStarting 
+  } = useWorkoutSessions(params.workoutId)
   const { workout, isLoading: isLoadingWorkout, error: workoutError } = useWorkout(params.workoutId)
 
   const handleStartSession = async () => {
     try {
-      setIsStarting(true)
-      setError(null)
-      await startWorkoutSession(params.workoutId)
-      refresh()
+      await startSession()
     } catch (err) {
-      console.error('Error starting session:', err)
-      setError(err instanceof Error ? err.message : t('errors.unknown_error'))
-    } finally {
-      setIsStarting(false)
+      toast({
+        variant: 'destructive',
+        title: t('errors.session_start_failed'),
+        description: err instanceof Error ? err.message : t('errors.try_again')
+      })
     }
   }
 
@@ -255,17 +257,6 @@ export default function WorkoutSessionsPage({ params }: WorkoutSessionsPageProps
               {t('workout.no_sessions_description')}
             </CardDescription>
           </CardHeader>
-        </Card>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <Card className="mt-4 border-0 bg-destructive/10">
-          <CardContent className="p-3">
-            <p className="text-sm text-destructive">
-              {error}
-            </p>
-          </CardContent>
         </Card>
       )}
 

@@ -68,6 +68,9 @@
     "set_log_failed": "Falha ao registrar série"
   },
   "workout": {
+    "common": {
+    "loading": "Registrando série"
+    },
     "my_workouts": "Meus Treinos",
     "delete_confirmation_description": "Essa ação vai excluir o treino e todos os exercícios associados. Tem certeza que deseja continuar?",
     "delete_confirmation_title": "Excluir Treino",
