@@ -131,7 +131,7 @@ export default function WorkoutSessionsPage() {
           </p>
           <Button asChild variant="outline">
             <Link href="/workouts/new">
-              {t('workout.create_first')}
+              {t('workout.create_first_workout')}
             </Link>
           </Button>
         </CardContent>

@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "FENYX",
-  description: "Track your workouts with precision",
+  description: "Registre seus treinos com precisão",
 };
 
 export default function RootLayout({
