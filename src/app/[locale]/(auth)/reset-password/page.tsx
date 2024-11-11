@@ -41,7 +41,6 @@ export default function ResetPasswordPage() {
     try {
       setError('')
       
-      // Validate password match
       if (data.password !== data.confirmPassword) {
         setError(t('auth.reset_password.passwords_dont_match'))
         return
