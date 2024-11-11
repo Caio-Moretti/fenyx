@@ -8,7 +8,8 @@ export const PUBLIC_PATHS = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
-  '/auth/confirm'
+  '/auth/confirm',
+  '/auth/reset-password'
 ] as readonly string[]
 
 
