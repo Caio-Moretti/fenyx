@@ -15,6 +15,7 @@ export const metadata: Metadata = {
       {
         url: "/images/logo_fenyx.svg",
         type: "image/svg+xml",
+        color: "#FF3333", // Cor vermelha do tema FENYX
       },
       // Fallback para browsers que não suportam SVG
       {
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
       {
         url: "/images/logo_fenyx.svg",
         type: "image/svg+xml",
+        color: "#FF3333", // Cor vermelha do tema FENYX
       }
     ],
   },
