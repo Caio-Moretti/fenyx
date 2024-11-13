@@ -29,7 +29,7 @@ export default function Home() {
             <Logo size={80} className="text-primary" />
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-primary">
+          <h1 className="text-4xl md:text-6xl font-bold text-white">
             {t('common.app_name')}
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">
