@@ -8,7 +8,33 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "FENYX",
-  description: "Registre seus treinos com precisão",
+  description: "Track your workouts with precision",
+  icons: {
+    icon: [
+      // SVG como ícone principal
+      {
+        url: "/images/logo_fenyx.svg",
+        type: "image/svg+xml",
+      },
+      // Fallback para browsers que não suportam SVG
+      {
+        url: "/favicon.ico",
+        sizes: "32x32",
+      },
+    ],
+    // SVG para a Apple (iOS irá converter automaticamente)
+    apple: [
+      {
+        url: "/images/logo_fenyx.svg",
+        type: "image/svg+xml",
+      }
+    ],
+  },
+  // Configurações adicionais úteis
+  other: {
+    "msapplication-TileColor": "#121214", // Cor do tema dark do FENYX
+    "theme-color": "#121214",
+  },
 };
 
 export default function RootLayout({
