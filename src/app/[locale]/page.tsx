@@ -32,7 +32,10 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold text-white">
             {t('common.app_name')}
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground">
+          <p className="text-xl md:text-2xl text-primary">
+            {"Rise stronger"}
+          </p>
+          <p className="text-xl md:text-xl text-muted-foreground">
             {t('hero.tagline')}
           </p>
         </div>
