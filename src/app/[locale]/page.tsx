@@ -5,6 +5,7 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/ui/logo' // Importando o componente Logo
 import {
   Card,
   CardContent,
@@ -22,8 +23,13 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-16 text-center space-y-8">
-        <div className="space-y-4 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-br from-primary to-red-900 bg-clip-text text-transparent">
+        <div className="space-y-6 max-w-3xl">
+          {/* Logo */}
+          <div className="flex justify-center">
+            <Logo size={80} className="text-primary" />
+          </div>
+          
+          <h1 className="text-4xl md:text-6xl font-bold text-primary">
             {t('common.app_name')}
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">
