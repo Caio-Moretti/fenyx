@@ -10,7 +10,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { 
   Menu,
   ChevronDown,
-  Flame,
   Dumbbell,
   BarChart2,
   LogOut,
@@ -19,6 +18,7 @@ import {
 import { cn } from '@/lib/utils'
 import { logout } from '@/server/actions/auth'
 import { useWorkoutsList } from '@/hooks/useWorkoutsList'
+import { Logo } from '@/components/ui/logo'
 
 interface NavItemProps {
   title: string
@@ -187,8 +187,8 @@ const SidebarContent = () => {
   return (
     <div className="flex flex-col h-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-4 h-14">
-        <Flame className="h-6 w-6 text-primary" />
+      <div className="flex items-center gap-3 px-4 h-14">
+        <Logo size={24} className="text-primary" />
         <span className="font-semibold text-lg">
           {t('common.app_name')}
         </span>
