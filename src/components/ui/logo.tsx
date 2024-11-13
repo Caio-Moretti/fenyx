@@ -9,7 +9,7 @@ interface LogoProps {
 export function Logo({ className, size = 32 }: LogoProps) {
   return (
     <Image
-      src="/images/logo_fenyx.svg"
+      src="/images/logo_fenyx.png"
       alt="FENYX"
       width={size}
       height={size}

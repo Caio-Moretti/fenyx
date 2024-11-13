@@ -11,24 +11,17 @@ export const metadata: Metadata = {
   description: "Track your workouts with precision",
   icons: {
     icon: [
-      // SVG como ícone principal
       {
-        url: "/images/logo_fenyx.svg",
-        type: "image/svg+xml",
-        color: "#FF3333", // Cor vermelha do tema FENYX
-      },
-      // Fallback para browsers que não suportam SVG
-      {
-        url: "/favicon.ico",
+        url: "/images/favicon.png",
         sizes: "32x32",
-      },
+        type: "image/png",
+      }
     ],
-    // SVG para a Apple (iOS irá converter automaticamente)
     apple: [
       {
-        url: "/images/logo_fenyx.svg",
-        type: "image/svg+xml",
-        color: "#FF3333", // Cor vermelha do tema FENYX
+        url: "/images/logo_fenyx.png",
+        sizes: "180x180",
+        type: "image/png",
       }
     ],
   },
