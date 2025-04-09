@@ -1,6 +1,6 @@
 'use client'
 
-import AuthCard from "./components/AuthCard"
+import AuthCard from "../components/AuthCard"
 import LoginForm from "./components/LoginForm"
 
 
