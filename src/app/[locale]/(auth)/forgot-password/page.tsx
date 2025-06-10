@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { requestPasswordReset } from '@/server/actions/auth'
 
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,7 @@ interface ForgotPasswordFormData {
 
 export default function ForgotPasswordPage() {
   const t = useTranslations()
+  const { locale } = useParams()
   const [error, setError] = useState<string>('')
   const [isEmailSent, setIsEmailSent] = useState(false)
   
@@ -38,7 +40,7 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       setError('')
-      const result = await requestPasswordReset(data)
+      const result = await requestPasswordReset(data, locale as string)
       
       if (result?.error) {
         setError(result.error)
