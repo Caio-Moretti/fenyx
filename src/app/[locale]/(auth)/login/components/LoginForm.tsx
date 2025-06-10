@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import { login } from '@/server/actions/auth'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,6 +21,7 @@ interface LoginFormData {
 
 export default function LoginForm() {
     const t = useTranslations()
+    const { locale } = useParams()
     const [error, setError] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     
@@ -33,8 +35,8 @@ export default function LoginForm() {
       try {
         setIsSubmitting(true)
         setError('')
-        
-        const result = await login(data)
+
+        const result = await login(data, locale as string)
         
         if (result?.error) {
           setError(result.error)

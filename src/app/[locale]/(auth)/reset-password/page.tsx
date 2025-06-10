@@ -4,6 +4,7 @@
 import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import { resetPassword } from '@/server/actions/auth'
 
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,7 @@ interface ResetPasswordFormData {
 
 export default function ResetPasswordPage() {
   const t = useTranslations()
+  const { locale } = useParams()
   const [error, setError] = useState<string>('')
   
   const {
@@ -46,7 +48,7 @@ export default function ResetPasswordPage() {
         return
       }
 
-      const result = await resetPassword({ password: data.password })
+      const result = await resetPassword({ password: data.password }, locale as string)
       
       if (result?.error) {
         setError(result.error)

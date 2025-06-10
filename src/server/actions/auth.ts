@@ -23,7 +23,7 @@ interface PasswordResetData {
   password: string
 }
 
-export async function register(data: RegisterData) {
+export async function register(data: RegisterData, locale: string) {
   const supabase = await createClient()
 
   const { data: authData, error } = await supabase.auth.signUp({
@@ -53,10 +53,10 @@ export async function register(data: RegisterData) {
     return { error: 'Este email já está associado a uma conta. Tente recuperar sua senha.' }
   }
 
-  redirect('/pt-BR/verify-email')
+  redirect(`/${locale}/verify-email`)
 }
 
-export async function login(data: LoginData) {
+export async function login(data: LoginData, locale: string) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -76,14 +76,17 @@ export async function login(data: LoginData) {
     }
   }
 
-  redirect('/workouts')
+  redirect(`/${locale}/workouts`)
 }
 
-export async function requestPasswordReset(data: PasswordResetRequestData) {
+export async function requestPasswordReset(
+  data: PasswordResetRequestData,
+  locale: string
+) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/pt-BR/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/reset-password`,
   })
 
   if (error) {
@@ -97,7 +100,7 @@ export async function requestPasswordReset(data: PasswordResetRequestData) {
 }
 
 
-export async function resetPassword(data: PasswordResetData) {
+export async function resetPassword(data: PasswordResetData, locale: string) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.updateUser({
@@ -116,7 +119,7 @@ export async function resetPassword(data: PasswordResetData) {
     }
   }
 
-  redirect('/workouts')
+  redirect(`/${locale}/workouts`)
 }
 
 export async function logout(locale: string) {

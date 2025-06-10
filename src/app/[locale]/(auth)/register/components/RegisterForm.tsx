@@ -7,8 +7,10 @@ import { CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRegister } from '../hooks/useRegister'
+import { useParams } from 'next/navigation'
 
 export default function RegisterForm() {
+  const { locale } = useParams()
   const {
     registerField,
     handleSubmit,
@@ -16,7 +18,7 @@ export default function RegisterForm() {
     isSubmitting,
     error,
     onSubmit
-  } = useRegister()
+  } = useRegister(locale as string)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

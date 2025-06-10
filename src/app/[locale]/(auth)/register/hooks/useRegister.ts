@@ -11,7 +11,7 @@ export interface RegisterFormData {
   password: string
 }
 
-export function useRegister() {
+export function useRegister(locale: string) {
   const t = useTranslations()
   const [error, setError] = useState<string>('')
   
@@ -25,7 +25,7 @@ export function useRegister() {
     try {
       setError('')
       
-      const result = await register(data)
+      const result = await register(data, locale)
       
       if (result?.error) {
         setError(result.error)

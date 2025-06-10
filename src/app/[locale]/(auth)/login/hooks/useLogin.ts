@@ -10,7 +10,7 @@ export interface LoginFormData {
   password: string
 }
 
-export function useLogin() {
+export function useLogin(locale: string) {
   const t = useTranslations()
   const [error, setError] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,7 +20,7 @@ export function useLogin() {
       setIsSubmitting(true)
       setError('')
       
-      const result = await login(data)
+      const result = await login(data, locale)
       
       if (result?.error) {
         setError(result.error)
